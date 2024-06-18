@@ -24,17 +24,17 @@ type ResponseRoute struct {
 		Legs []struct {
 			Duration float64 `json:"duration"`
 			Distance float64 `json:"distance"`
-		}
-	}
+		} `json:"legs"`
+	} `json:"routes"`
 }
 
 func (s *Service) GetDirection(src direction.Coordinate, dst ...direction.Coordinate) ([]direction.DirectionLeg, error) {
 	baseUrl := `http://router.project-osrm.org/route/v1/driving/%s?overview=false`
 	coords := []string{}
 	// While we could implement a default string method on the coordinate, I'd rather keep this very specific format to this service, the format may differ slightly in other integrations.
-	coords = append(coords, fmt.Sprintf("%s,%s", src.Lng, src.Lat))
+	coords = append(coords, fmt.Sprintf("%s,%s", src.Lat, src.Lng))
 	for _, d := range dst {
-		coords = append(coords, fmt.Sprintf("%s,%s", d.Lng, d.Lat))
+		coords = append(coords, fmt.Sprintf("%s,%s", d.Lat, d.Lng))
 	}
 	url := fmt.Sprintf(baseUrl, strings.Join(coords, ";"))
 	req, err := http.NewRequest(http.MethodGet, url, nil)
