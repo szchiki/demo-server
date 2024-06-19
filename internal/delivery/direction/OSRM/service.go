@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"ingrid/internal/direction"
+	"ingrid/internal/delivery"
 )
 
 // Service lets us interact with the OSRM API. Creating this http client lets us store configurations specific to this integration.
@@ -28,14 +28,9 @@ type ResponseRoute struct {
 	} `json:"routes"`
 }
 
-func (s *Service) GetDirection(src direction.Coordinate, dst ...direction.Coordinate) ([]direction.DirectionLeg, error) {
+func (s *Service) GetDirection(src delivery.Coordinate, dst delivery.Coordinate) ([]delivery.Distance, error) {
 	baseUrl := `http://router.project-osrm.org/route/v1/driving/%s?overview=false`
-	coords := []string{}
-	// While we could implement a default string method on the coordinate, I'd rather keep this very specific format to this service, the format may differ slightly in other integrations.
-	coords = append(coords, fmt.Sprintf("%s,%s", src.Lat, src.Lng))
-	for _, d := range dst {
-		coords = append(coords, fmt.Sprintf("%s,%s", d.Lat, d.Lng))
-	}
+	coords := []string{src.String(), dst.String()}
 	url := fmt.Sprintf(baseUrl, strings.Join(coords, ";"))
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -50,9 +45,9 @@ func (s *Service) GetDirection(src direction.Coordinate, dst ...direction.Coordi
 	if err := json.NewDecoder(resp.Body).Decode(&routes); err != nil {
 		return nil, err
 	}
-	legs := []direction.DirectionLeg{}
+	legs := []delivery.Distance{}
 	for _, leg := range routes.Routes[0].Legs {
-		legs = append(legs, direction.DirectionLeg{
+		legs = append(legs, delivery.Distance{
 			Distance: leg.Distance,
 			Duration: leg.Duration,
 		})

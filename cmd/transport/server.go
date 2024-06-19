@@ -3,8 +3,8 @@ package transport
 import (
 	"errors"
 	"github.com/labstack/echo/v4"
-	"ingrid/internal/direction"
-	directionService "ingrid/services/direction"
+	"ingrid/internal/delivery"
+	directionService "ingrid/services/delivery"
 	"strings"
 )
 
@@ -19,7 +19,7 @@ func NewServer(ds *directionService.Service) *Server {
 		d: ds,
 	}
 
-	s.e.GET("/direction", s.endpointDirectionsGet)
+	s.e.GET("/delivery", s.endpointDirectionsGet)
 
 	return &s
 }
@@ -34,17 +34,19 @@ type DirectionRequest struct {
 	Dst []string `query:"dst"`
 }
 
-func parseCoordinate(s string) (direction.Coordinate, error) {
+func parseCoordinate(s string) (delivery.Coordinate, error) {
 	parts := strings.Split(s, ",")
 	if len(parts) != 2 {
-		return direction.Coordinate{}, errors.New("invalid coordinate")
+		return delivery.Coordinate{}, errors.New("invalid coordinate")
 	}
-	return direction.Coordinate{
+	return delivery.Coordinate{
 		Lat: parts[0],
 		Lng: parts[1],
 	}, nil
 }
 
+// src 59.336451,18.061630
+// dst 59.349957,18.001322;59.310650,18.112240;59.337336,17.933603
 func (s *Server) endpointDirectionsGet(c echo.Context) error {
 	//TODO: Get start and stop (1 start, multiple stops)
 	req := &DirectionRequest{}
@@ -55,7 +57,7 @@ func (s *Server) endpointDirectionsGet(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	destinations := []direction.Coordinate{}
+	destinations := []delivery.Coordinate{}
 	for _, dst := range req.Dst {
 		d, err := parseCoordinate(dst)
 		if err != nil {
@@ -73,5 +75,5 @@ func (s *Server) endpointDirectionsGet(c echo.Context) error {
 	}
 	_ = legs
 	//TODO: Calculate shortest distance
-	return nil
+	return c.JSON(200, legs)
 }

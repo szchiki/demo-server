@@ -2,14 +2,14 @@ package main
 
 import (
 	"ingrid/cmd/transport"
-	"ingrid/internal/direction/OSRM"
-	"ingrid/services/direction"
+	"ingrid/internal/delivery/direction/OSRM"
+	"ingrid/services/delivery"
 	"log"
 )
 
 func main() {
 	maps := OSRM.NewClient()
-	s := direction.NewService(maps)
+	s := delivery.NewService(maps)
 
 	srv := transport.NewServer(s)
 	if err := srv.Start(); err != nil {
