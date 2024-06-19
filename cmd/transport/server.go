@@ -2,6 +2,7 @@ package transport
 
 import (
 	"errors"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"ingrid/internal/delivery"
 	directionService "ingrid/services/delivery"
@@ -24,8 +25,9 @@ func NewServer(ds *directionService.Service) *Server {
 	return &s
 }
 
-func (s *Server) Start() error {
-	return s.e.Start(":8080")
+func (s *Server) Start(port string) error {
+	fmt.Println("Listening on ", port)
+	return s.e.Start(port)
 }
 
 // http://localhost:8080/direction?src=13.388860,52.517037&dst=13.397634,52.529407&dst=13.428555,52.523219

@@ -1,0 +1,15 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build',
+           '-t', 'europe-north1-docker.pkg.dev/delivery-demo-426913/delivery-demo/demo-server',
+           '-f', 'cmd/Dockerfile',
+           '.'
+    ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-north1-docker.pkg.dev/delivery-demo-426913/delivery-demo/demo-server']
+  - name: 'gcr.io/cloud-builders/gcloud'
+    script: |
+      gcloud run deploy delivery-demo \
+        --image europe-north1-docker.pkg.dev/delivery-demo-426913/delivery-demo/demo-server \
+        --region europe-north1 \
+        --max-instances 1
