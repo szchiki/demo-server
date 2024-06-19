@@ -25,10 +25,11 @@ func (s *Service) GetDirection(src delivery.Coordinate, destinations ...delivery
 		}
 		dstOpt := delivery.PickupOptionsDestination{Dst: dst.String()}
 		for _, leg := range legs {
-			dstOpt.Distance.Distance += leg.Distance
-			dstOpt.Distance.Duration += leg.Duration
+			dstOpt.Distance += leg.Distance
+			dstOpt.Duration += leg.Duration
 		}
 		pickup.Destinations = append(pickup.Destinations, dstOpt)
 	}
+	delivery.SortPickupDestinations(pickup.Destinations)
 	return pickup, nil
 }

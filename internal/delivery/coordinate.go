@@ -9,18 +9,3 @@ type Coordinate struct {
 func (c Coordinate) String() string {
 	return c.Lat + "," + c.Lng
 }
-
-type Distance struct {
-	Duration float64 `json:"duration"`
-	Distance float64 `json:"distance"`
-}
-
-type PickupOptions struct {
-	Src          string                     `json:"source"`
-	Destinations []PickupOptionsDestination `json:"routes"`
-}
-
-type PickupOptionsDestination struct {
-	Distance
-	Dst string `json:"destination"`
-}
