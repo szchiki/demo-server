@@ -20,6 +20,9 @@ func NewServer(ds *directionService.Service) *Server {
 		d: ds,
 	}
 
+	s.e.GET("/ready", func(c echo.Context) error { return c.String(200, "OK") })
+	s.e.GET("/health", func(c echo.Context) error { return c.String(200, "OK") })
+	s.e.GET("/l", func(c echo.Context) error { return c.String(200, "OK") })
 	s.e.GET("/delivery", s.endpointDirectionsGet)
 
 	return &s
@@ -27,7 +30,7 @@ func NewServer(ds *directionService.Service) *Server {
 
 func (s *Server) Start(port string) error {
 	fmt.Println("Listening on ", port)
-	return s.e.Start(port)
+	return s.e.Start(fmt.Sprintf("0.0.0.0:%s", port))
 }
 
 // http://localhost:8080/direction?src=13.388860,52.517037&dst=13.397634,52.529407&dst=13.428555,52.523219

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"ingrid/cmd/transport"
 	"ingrid/internal/delivery/direction/OSRM"
 	"ingrid/services/delivery"
@@ -10,9 +9,9 @@ import (
 )
 
 func main() {
-	port := ":8080"
+	port := "8080"
 	if p := os.Getenv("PORT"); p != "" {
-		port = fmt.Sprintf(":%s", os.Getenv(p))
+		port = p
 	}
 	maps := OSRM.NewClient()
 	s := delivery.NewService(maps)
